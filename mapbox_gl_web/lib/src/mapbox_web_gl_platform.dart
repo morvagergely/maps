@@ -766,6 +766,24 @@ class MapboxWebGlPlatform extends MapboxGlPlatform
   }
 
   @override
+  Future<void> addFillExtrusionLayer(
+      String sourceId, String layerId, Map<String, dynamic> properties,
+      {String? belowLayerId,
+      String? sourceLayer,
+      double? minzoom,
+      double? maxzoom,
+      dynamic filter,
+      required bool enableInteraction}) async {
+    return _addLayer(sourceId, layerId, properties, "fill-extrusion",
+        belowLayerId: belowLayerId,
+        sourceLayer: sourceLayer,
+        minzoom: minzoom,
+        maxzoom: maxzoom,
+        filter: filter,
+        enableInteraction: enableInteraction);
+  }
+
+  @override
   Future<void> addLineLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
       {String? belowLayerId,
@@ -858,7 +876,7 @@ class MapboxWebGlPlatform extends MapboxGlPlatform
 
     if (enableInteraction) {
       _interactiveFeatureLayerIds.add(layerId);
-      if (layerType == "fill") {
+      if (layerType == "fill" || layerType == "fill-extrusion") {
         _map.on('mousemove', layerId, _onMouseEnterFeature);
       } else {
         _map.on('mouseenter', layerId, _onMouseEnterFeature);

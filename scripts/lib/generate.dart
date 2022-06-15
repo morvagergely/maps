@@ -15,6 +15,7 @@ main() async {
     "circle",
     "line",
     "fill",
+    "fill-extrusion",
     "raster",
     "hillshade"
   ];
@@ -31,7 +32,7 @@ main() async {
     "layerTypes": [
       for (var type in layerTypes)
         {
-          "type": type,
+          "type": ReCase(type).camelCase,
           "typePascal": ReCase(type).pascalCase,
           "paint_properties": buildStyleProperties(styleJson, "paint_$type"),
           "layout_properties": buildStyleProperties(styleJson, "layout_$type"),
@@ -121,10 +122,14 @@ Map<String, dynamic> buildSourceProperty(
   final camelCase = ReCase(key).camelCase;
   final typeDart = dartTypeMappingTable[value["type"]];
   final typeSwift = swiftTypeMappingTable[value["type"]];
-  final nestedTypeDart = dartTypeMappingTable[value["value"]] ??
-      dartTypeMappingTable[value["value"]["type"]];
-  final nestedTypeSwift = swiftTypeMappingTable[value["value"]] ??
-      swiftTypeMappingTable[value["value"]["type"]];
+  final nestedTypeDart = value["type"] == "array"
+      ? dartTypeMappingTable[value["value"]] ??
+          dartTypeMappingTable[value["value"]["type"]]
+      : null;
+  final nestedTypeSwift = value["type"] == "array"
+      ? swiftTypeMappingTable[value["value"]] ??
+          swiftTypeMappingTable[value["value"]["type"]]
+      : null;
 
   var defaultValue = value["default"];
   if (defaultValue is List) {
